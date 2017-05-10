@@ -42,10 +42,10 @@ include_directories(${WEENY}/include)
 #	4. собираем имена файлов с исходными текстами
 #    в две переменные ALL_HEADERS и ALL_SOURCES
 #
-set(
+file(GLOB
 	ALL_SOURCES
 
-	src/main.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
 	)
 
 ###############################################################################
@@ -53,6 +53,9 @@ set(
 #	5. Настройки, необходимые для создания таргета
 #
 if (${BUILD_PLATFORM} STREQUAL "ANDROID")
+	configure_file (${WEENY}/src/platforms/ANDROID/jni/jni.cpp ${CMAKE_BINARY_DIR}/jni/jni.cpp)
+	list (APPEND ALL_SOURCES ${CMAKE_BINARY_DIR}/jni/jni.cpp)
+	
 	configure_file (${CMAKE_CURRENT_SOURCE_DIR}/targets/ANDROID/addres/strings.xml ${CMAKE_BINARY_DIR}/../../res/values/strings.xml)
 	configure_file (${CMAKE_CURRENT_SOURCE_DIR}/targets/ANDROID/cmake/ant.properties ${CMAKE_BINARY_DIR}/../../ant.properties)
 	configure_file (${CMAKE_CURRENT_SOURCE_DIR}/targets/ANDROID/cmake/AndroidManifest.xml ${CMAKE_BINARY_DIR}/../../AndroidManifest.xml)

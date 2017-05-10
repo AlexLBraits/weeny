@@ -2,14 +2,10 @@
 
 #if defined( BUILD_ANDROID )
 #include <platforms/ANDROID/application_p.h>
-#elif defined( BUILD_EMSCRIPTEN )
-#include <platforms/EMSCRIPTEN/application_p.h>
 #elif defined( BUILD_GENERIC )
 #include <platforms/GENERIC/application_p.h>
 #elif defined( BUILD_IOS )
 #include <platforms/IOS/application_p.h>
-#elif defined( BUILD_WINDOWS )
-#include <platforms/WINDOWS/application_p.h>
 #endif
 
 Application::Application()

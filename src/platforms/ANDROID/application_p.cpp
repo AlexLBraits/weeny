@@ -12,7 +12,7 @@ Application_p::Application_p(Application* owner, int argc, char** argv)
 	mJavaVM = 0;
 	application = owner;
 	
-	__android_log_write(ANDROID_LOG_ERROR, "SBB", "Application_p::Application_p");
+	__android_log_write(ANDROID_LOG_ERROR, "WEENY", "Application_p::Application_p");
 }
 
 Application_p::~Application_p()

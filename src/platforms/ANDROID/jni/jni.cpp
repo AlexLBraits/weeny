@@ -3,16 +3,6 @@
 #include <queue>
 #include <application.h>
 
-// #define JNI_NATIVE_METHOD_PREFIX Java_@ANDROID_JNI_NATIVE_METHOD_NAME@
-#define JNI_NATIVE_METHOD_PREFIX Java_com_example_myapp_MyProject
-
-#define JNI_NATIVE_METHOD_INIT 			Java_com_example_myapp_MyProject_init
-#define JNI_NATIVE_METHOD_RESHAPE 	Java_com_example_myapp_MyProject_reshape
-#define JNI_NATIVE_METHOD_DISPLAY 	Java_com_example_myapp_MyProject_display
-#define JNI_NATIVE_METHOD_QUIT 			Java_com_example_myapp_MyProject_quit
-#define JNI_NATIVE_METHOD_ON_KEY 		Java_com_example_myapp_MyProject_onKey
-#define JNI_NATIVE_METHOD_ON_TOICH 	Java_com_example_myapp_MyProject_onTouch
-
 #include <android/log.h>
 
 //-----------------------------------------------------------------------------
@@ -40,9 +30,9 @@ extern "C" jint JNI_OnLoad (JavaVM* vm, void* reserved)
 int main(int argc, const char* argv[]);
 
 extern "C"
-void JNI_NATIVE_METHOD_INIT (JNIEnv* env, jobject obj, jobjectArray strArray)
+void Java_@ANDROID_JNI_NATIVE_METHOD_NAME@_init (JNIEnv* env, jobject obj, jobjectArray strArray)
 {
-  __android_log_write(ANDROID_LOG_ERROR, "SBB", "JNI_NATIVE_METHOD_INIT");
+  __android_log_write(ANDROID_LOG_ERROR, "WEENY", "JNI_NATIVE_METHOD_INIT");
   
   int argc = 1;
   const char* argv[] = {"dll_main"};
@@ -52,7 +42,7 @@ void JNI_NATIVE_METHOD_INIT (JNIEnv* env, jobject obj, jobjectArray strArray)
 
 // Resize
 extern "C"
-void JNI_NATIVE_METHOD_RESHAPE (
+void Java_@ANDROID_JNI_NATIVE_METHOD_NAME@_reshape (
   JNIEnv* env, jobject jcls,
   jint _width, jint _height)
 {
@@ -60,24 +50,24 @@ void JNI_NATIVE_METHOD_RESHAPE (
 }
 
 extern "C"
-void JNI_NATIVE_METHOD_DISPLAY (JNIEnv* env, jobject cls) 
+void Java_@ANDROID_JNI_NATIVE_METHOD_NAME@_display (JNIEnv* env, jobject cls) 
 {
   application->draw();
 }
 
 // Quit
 extern "C"
-void JNI_NATIVE_METHOD_QUIT (JNIEnv* env, jobject cls)
+void Java_@ANDROID_JNI_NATIVE_METHOD_NAME@_quit (JNIEnv* env, jobject cls)
 {
 }
 
 extern "C"
-void JNI_NATIVE_METHOD_ON_KEY (JNIEnv* env, jobject cls, jint keycode, jint isDown)
+void Java_@ANDROID_JNI_NATIVE_METHOD_NAME@_onKey (JNIEnv* env, jobject cls, jint keycode, jint isDown)
 {
 }
 
 extern "C"
-void JNI_NATIVE_METHOD_ON_TOICH (
+void Java_@ANDROID_JNI_NATIVE_METHOD_NAME@_onTouch (
   JNIEnv* env, jobject cls,
   jint action, jint pointerFingerId,
   jfloat x, jfloat y)

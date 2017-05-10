@@ -37,17 +37,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 #	4. собираем имена файлов с исходными текстами
 #    в две переменные ALL_HEADERS и ALL_SOURCES
 #
-set(
+file(GLOB
 	ALL_HEADERS
 
-	include/application.h
-	)
+	include/*.h
+)
 	
-set(
+file(GLOB
 	ALL_SOURCES
 
-	src/application.cpp
-	)
+	src/*.cpp
+)
 
 file(GLOB
 	PLATFORM_HEADERS
