@@ -79,6 +79,7 @@ if (${BUILD_PLATFORM} STREQUAL "ANDROID")
 	file(COPY src/platforms/ANDROID/gradle_files/gradlew DESTINATION ${CMAKE_BINARY_DIR}/../../)
 	file(COPY src/platforms/ANDROID/gradle_files/gradlew.bat DESTINATION ${CMAKE_BINARY_DIR}/../../)
 	file(COPY src/platforms/ANDROID/gradle_files/gradle DESTINATION ${CMAKE_BINARY_DIR}/../../)
+	file(COPY src/platforms/ANDROID/gradle_files/my-release-key.jks DESTINATION ${CMAKE_BINARY_DIR}/../../)
 		
 	set (USED_FRAMEWORKS
 		${USED_FRAMEWORKS}

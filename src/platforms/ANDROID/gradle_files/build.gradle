@@ -60,10 +60,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile = new File(antProperties['key.store'])
-            storePassword = antProperties['key.store.password']
-            keyAlias = antProperties['key.alias']
-            keyPassword = antProperties['key.alias.password']
+          storeFile file("my-release-key.jks")
+          storePassword "password"
+          keyAlias "my-alias"
+          keyPassword "password"
         }
     }
 
