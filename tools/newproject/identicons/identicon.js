@@ -1,8 +1,8 @@
-// 
-// Скрипт identicon строит изображение (иконку) по значению 
-// хэша заданной строки.
-// Иконка строится размера 7x7 пикселей и сохраняется в формате xpm.
-// 
+/// 
+/// Скрипт identicon строит изображение (иконку) по значению 
+/// хэша заданной строки.
+/// Иконка строится размера 7x7 пикселей и сохраняется в формате xpm.
+/// 
 function about()
 {
 	console.log(
@@ -13,6 +13,18 @@ function about()
 		"\n\n"
 		);
 	process.exit(1);	
+}
+///
+/// http://stackoverflow.com/questions/17204335/convert-decimal-to-hex-missing-padded-0
+///
+function d2h(d) 
+{
+    var s = (+d).toString(16);
+    if(s.length < 2) 
+		{
+        s = '0' + s;
+    }
+    return s;
 }
 
 (function main() {
@@ -25,10 +37,10 @@ function about()
     var r = hash[0] & 255;
     var g = hash[1] & 255;
     var b = hash[2] & 255;
-    var foregroundColour = "#" + r.toString(16) + g.toString(16) + b.toString(16);
+    var foregroundColour = "#" + d2h(r) + d2h(g) + d2h(b);
 
-    var t = (r + g + b) > 650 ? 128 : 255;
-    var backgroundColour = "#" + t.toString(16) + t.toString(16) + t.toString(16);
+    var bc = d2h((r + g + b) > 650 ? 128 : 255);
+    var backgroundColour = "#" + bc + bc + bc;
 
     const fgp = '*';
     const bgp = '.';
