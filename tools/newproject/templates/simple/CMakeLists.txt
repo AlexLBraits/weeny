@@ -43,6 +43,12 @@ include_directories(${WEENY}/include)
 #    в две переменные ALL_HEADERS и ALL_SOURCES
 #
 file(GLOB
+    ALL_HEADERS
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+    )
+
+file(GLOB
 	ALL_SOURCES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp

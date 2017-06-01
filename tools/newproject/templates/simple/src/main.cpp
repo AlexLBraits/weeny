@@ -1,7 +1,7 @@
-#include <application.h>
+#include <WApplication.h>
 
 int main(int argc, char** argv)
 {
-    const Application& app = Application::getInstance(argc, argv);
+    const WApplication& app = WApplication::getInstance(argc, argv);
     return app.exec();
 }
