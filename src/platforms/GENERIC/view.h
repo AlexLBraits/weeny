@@ -3,14 +3,14 @@
 
 #include <QtOpenGL/QGLWidget>
 
-class Application;
+class WApplication;
 
 class PlatformView : public QGLWidget
 {
     Q_OBJECT
     
 public:
-    PlatformView(Application* app);
+    PlatformView(WApplication* app);
     
 protected:
     void initializeGL() override;
@@ -20,7 +20,8 @@ protected:
     void timerEvent(QTimerEvent *event) override;
     
 private:
-    Application* _q;
+    qint64 _lastTime;
+    WApplication* _q;
 };
 
 #endif // PLATFORM_VIEW_H

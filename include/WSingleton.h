@@ -8,13 +8,13 @@
 #include <functional>
 
 template<typename T> // Singleton policy class
-class Singleton
+class WSingleton
 {
 protected:
-    Singleton() = default;
-    Singleton(const Singleton&) = delete;
-    Singleton& operator=(const Singleton&) = delete;
-    virtual ~Singleton() = default;
+    WSingleton() = default;
+    WSingleton(const WSingleton&) = delete;
+    WSingleton& operator=(const WSingleton&) = delete;
+    virtual ~WSingleton() = default;
 public:
     template<typename... Args>
     static T& getInstance(Args... args) // Singleton
@@ -42,7 +42,6 @@ private:
 		static T instance{ std::forward<Args>(args)... };
 		return instance;
     }
-    
 };
 
 #endif // SINGLETON_H

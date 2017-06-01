@@ -1,14 +1,14 @@
 #include <jni.h>
 #include <stdlib.h>
 #include <queue>
-#include <application.h>
+#include <WApplication.h>
 
 #include <android/log.h>
 
 //-----------------------------------------------------------------------------
 // Globals.
 //-----------------------------------------------------------------------------
-extern Application* application;
+extern WApplication* application;
 JavaVM* mJavaVM = nullptr;
 
 /*******************************************************************************

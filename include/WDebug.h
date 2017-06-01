@@ -3,7 +3,7 @@
 
 #include <mutex>
 
-class Debug
+class WDebug
 {
 public:
 	static void log(const char* label, const char* format, ...);

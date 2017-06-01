@@ -1,9 +1,9 @@
 #import "appdelegate.h"
 #import "view.h"
 
-#import "application.h"
+#import <WApplication.h>
 
-extern Application* Application;
+extern WApplication* Application;
 
 @implementation AppDelegate
 

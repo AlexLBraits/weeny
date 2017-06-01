@@ -1,8 +1,8 @@
 #import "view.h"
 #import "renderer.h"
 
-#import "application.h"
-extern Application* application;
+#import <WApplication.h>
+extern WApplication* application;
 
 @interface View ()
 {

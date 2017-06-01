@@ -1,4 +1,4 @@
-#include <debug.h>
+#include <WDebug.h>
 
 #if defined( BUILD_ANDROID )
 #include <platforms/ANDROID/debug_p.h>
@@ -13,13 +13,13 @@
 
 #define LOG_LINE_LIMIT  65535
 
-std::mutex Debug::m_logMutex;
+std::mutex WDebug::m_logMutex;
 
-void Debug::log(const char* label, const char* format, ... )
+void WDebug::log(const char* label, const char* format, ... )
 {
   static char buffer[LOG_LINE_LIMIT];
 
-  std::lock_guard<std::mutex> lock(Debug::m_logMutex);
+  std::lock_guard<std::mutex> lock(WDebug::m_logMutex);
 
   snprintf (buffer, LOG_LINE_LIMIT - 1, "%s: %s", label, format);
   
