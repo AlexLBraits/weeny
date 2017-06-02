@@ -4,17 +4,17 @@
 #include <QApplication>
 #include "view.h"
 
-class WApplication;
+class Application;
 
-class WApplication_p
+class Application_p
 {
 public:
-    WApplication_p(WApplication* owner, int argc, char** argv);
-    ~WApplication_p();
+    Application_p(Application* owner, int argc, char** argv);
+    ~Application_p();
     int exec();
-    
+
 private:
-    WApplication* _q;
+    Application* _q;
     QApplication _app;
     PlatformView _view;
 };

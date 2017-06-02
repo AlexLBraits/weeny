@@ -3,13 +3,13 @@
 
 #include <mutex>
 
-class WDebug
+class Debug
 {
 public:
-	static void log(const char* label, const char* format, ...);
-	
+    static void log(const char* label, const char* format, ...);
+
 private:
-	static std::mutex m_logMutex;
+    static std::mutex m_logMutex;
 };
 
 #ifdef LOGGING_DISABLED

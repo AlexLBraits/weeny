@@ -4,7 +4,7 @@
 class Debug_p
 {
 public:
-	static void log(const char* message);
+    static void log(const char* message);
 };
 
 #endif // DEBUG_P_H

@@ -1,8 +1,8 @@
 #include "view.h"
-#include <WApplication.h>
+#include <application.h>
 #include <QDateTime>
 
-PlatformView::PlatformView(WApplication* app)
+PlatformView::PlatformView(Application* app)
     : QGLWidget(), _q(app)
 {
     _lastTime = QDateTime::currentMSecsSinceEpoch();
@@ -12,7 +12,6 @@ PlatformView::PlatformView(WApplication* app)
 
 void PlatformView::initializeGL()
 {
-    _q->initialize();
 }
 
 void PlatformView::resizeGL(int width, int height)
@@ -36,6 +35,6 @@ void PlatformView::timerEvent(QTimerEvent *event)
     float dt = (t - _lastTime) / 1000.0f;
     _q->update(dt);
     _lastTime = t;
-        
+
     updateGL();
 }

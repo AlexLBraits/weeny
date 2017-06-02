@@ -1,7 +1,7 @@
 #import "renderer.h"
 
-#import <WApplication.h>
-extern WApplication* application;
+#import <application.h>
+extern Application* application;
 
 @interface Renderer ()
 {

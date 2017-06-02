@@ -1,17 +1,17 @@
 #include "application_p.h"
 #include "view.h"
 
-WApplication_p::WApplication_p(WApplication* owner, int argc, char** argv)
- : _q(owner), _app(argc, argv), _view(_q)
+Application_p::Application_p(Application* owner, int argc, char** argv)
+    : _q(owner), _app(argc, argv), _view(_q)
 {
     _view.show();
 }
 
-WApplication_p::~WApplication_p()
+Application_p::~Application_p()
 {
 }
 
-int WApplication_p::exec()
+int Application_p::exec()
 {
     return _app.exec();
 }
