@@ -1,4 +1,5 @@
 #include "application_p.h"
+#include <application.h>
 #include <jni.h>
 
 extern JavaVM* mJavaVM;
@@ -22,5 +23,6 @@ Application_p::~Application_p()
 
 int Application_p::exec()
 {
+	_q->initialize();
 	return 0;
 }

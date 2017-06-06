@@ -3,5 +3,5 @@
 
 void Debug_p::log(const char* message)
 {
-	NSLog([NSString stringWithUTF8String:message]);
+	NSLog(@"%@", [NSString stringWithUTF8String:message]);
 }

@@ -56,6 +56,8 @@ extern Application* application;
         return nil;
     }
     
+    application->initialize();
+    
     return self;
 }
 

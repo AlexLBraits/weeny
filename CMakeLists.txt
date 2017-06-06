@@ -34,6 +34,8 @@ set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} PARENT_SCOPE)
 #
 #	3. Подключение проекта заголовочных файлов
 #
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/platforms/${BUILD_PLATFORM})

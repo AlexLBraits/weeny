@@ -3,5 +3,5 @@
 
 void Debug_p::log(const char* message)
 {
-    fprintf(stderr, message);
+    fprintf(stderr, "%s", message);
 }
