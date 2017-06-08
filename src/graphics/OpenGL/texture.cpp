@@ -8,7 +8,7 @@ Texture::Texture()
 {
 }
 
-Texture::Texture(const unsigned char* src, unsigned int size)
+Texture::Texture(const unsigned char *src, unsigned int size)
     : Texture()
 {
 }

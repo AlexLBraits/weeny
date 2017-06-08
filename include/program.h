@@ -9,9 +9,7 @@ typedef std::shared_ptr<Program> ProgramPtr;
 
 struct Program
 {
-    Program();
-    Program(const unsigned char* vsrc, unsigned int vlen,
-            const unsigned char* fsrc, unsigned int flen);
+    Program(const char *vsrc, int vlen, const char *fsrc, int flen);
     ~Program();
 
     unsigned int id() const;
@@ -29,8 +27,11 @@ struct Program
     void setUniformValue(const char* name, const glm::vec4& value);
     void setUniformValue(const char* name, const glm::mat4x4& value);
 
+    void drawTriangles(unsigned int id, const glm::vec3* vertices, size_t size);
+    void drawTriangles(const char* name, const glm::vec3* vertices, size_t size);
+
 private:
-    unsigned int m_id;
+    unsigned int m_program;
     static ProgramPtr m_dummy;
 };
 

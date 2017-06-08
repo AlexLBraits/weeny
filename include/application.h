@@ -3,7 +3,7 @@
 
 #include <singleton.h>
 #include <universe.h>
-#include <visualiser.h>
+#include <widget.h>
 
 class Application_p;
 
@@ -29,7 +29,7 @@ private:
 
 protected:
     Universe m_universe;
-    mutable Visualiser m_visualiser;
+    mutable Widget m_visualiser;
 };
 
 #endif /* APPLICATION_H */

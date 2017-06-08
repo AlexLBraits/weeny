@@ -69,8 +69,8 @@ struct ResourceCache<ProgramPtr> : private std::map<std::string, ProgramPtr>
         {
             return (*this)[key] = ProgramPtr(
                                       new Program(
-                                          vrit->second.first, vrit->second.second,
-                                          frit->second.first, frit->second.second
+                                          (const char*)vrit->second.first, vrit->second.second,
+                                          (const char*)frit->second.first, frit->second.second
                                       )
                                   );
         }

@@ -46,5 +46,5 @@ void Application::update(float dt)
 
 void Application::draw() const
 {
-    m_visualiser.drawUniverse(m_universe);
+    m_visualiser.draw(m_universe);
 }
