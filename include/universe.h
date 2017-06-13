@@ -2,21 +2,29 @@
 #define UNIVERSE_H
 
 #include <list>
-
+#include <vector>
 #include <hierarchy.h>
 #include <types.h>
 #include <program.h>
 #include <texture.h>
+#include <widget.h>
 
+////////////////////////////////////////////////////////////////////////////////
+/// \brief The UniverseNode struct
+///
 struct UniverseNode : public Hierarchy<UniverseNode>
 {
-    void update(float dt);
+    virtual void update(float dt);
 
 protected:
-    mutable glm::mat4x4 u_transform;
-    virtual void _update(float dt);
-};
+    virtual void update_this(float dt);
+    virtual void calculateTransform() const;
 
+    mutable glm::mat4x4 u_transform;
+};
+////////////////////////////////////////////////////////////////////////////////
+/// \brief The Camera struct
+///
 struct Camera : public UniverseNode
 {
     Camera();
@@ -38,8 +46,6 @@ struct Camera : public UniverseNode
     void setFar(float far);
 
 protected:
-    virtual void calculateTransform() const = 0;
-
     float m_fov;
     float m_width;
     float m_height;
@@ -47,55 +53,91 @@ protected:
     float m_far;
 };
 typedef std::shared_ptr<Camera> CameraPtr;
-
+////////////////////////////////////////////////////////////////////////////////
+/// \brief The OrthoCamera struct
+///
 struct OrthoCamera : public Camera
 {
     OrthoCamera();
 protected:
     void calculateTransform() const override;
 };
-
-struct Spectator : public UniverseNode
-{
-   Spectator(const CameraPtr& camera);
-   glm::mat4x4& getViewMatrix() const;
-   const CameraPtr& getCamera() const;
-
-protected:
-   glm::vec3 m_position;
-   glm::vec3 m_target;
-    glm::vec3 m_up;
-    CameraPtr m_camera;
-};
-typedef std::shared_ptr<Spectator> SpectatorPtr;
-
+////////////////////////////////////////////////////////////////////////////////
+/// \brief The DrawingNode struct
+///
 struct DrawingNode : public UniverseNode
 {
-    void draw(const glm::mat4x4& parenttr) const;
+    virtual void draw(const glm::mat4x4& parenttr) const;
+    virtual void resize(int width, int height);
     ProgramPtr program() const;
 
+    glm::vec3 position() const;
+    void setPosition(const glm::vec3 &position);
+
 protected:
-    virtual void _draw(const glm::mat4x4& M) const;
+    virtual void draw_this(const glm::mat4x4& M) const;
+    virtual void resize_this(int width, int height);
+
+    mutable std::vector<glm::vec3> m_vertices;
+    glm::vec3 m_position;
 
     mutable ProgramPtr m_program;
     TexturePtr m_texture;
 };
+////////////////////////////////////////////////////////////////////////////////
+/// \brief The Spectator struct
+///
+struct Spectator : public DrawingNode
+{
+    Spectator(const CameraPtr& camera);
+    glm::mat4x4& getViewMatrix() const;
+    CameraPtr camera() const;
 
+protected:
+    void calculateTransform() const override;
+
+    glm::vec3 m_target;
+    glm::vec3 m_up;
+    CameraPtr m_camera;
+};
+typedef std::shared_ptr<Spectator> SpectatorPtr;
+////////////////////////////////////////////////////////////////////////////////
+/// \brief The UniverseLayer struct
+///
 struct UniverseLayer : public DrawingNode
 {
     UniverseLayer();
+    void draw(const glm::mat4x4&) const override;
+    glm::mat4x4& getProjectViewMatrix() const;
     SpectatorPtr spectator() const;
 
 protected:
-    void _draw(const glm::mat4x4&) const override {};
+    void calculateTransform() const override;
+    void draw_this(const glm::mat4x4&) const override;;
+    void resize_this(int width, int height) override;
 
     SpectatorPtr m_spectator;
 };
 typedef std::shared_ptr<UniverseLayer> UniverseLayerPtr;
-
-struct Universe : public std::list<UniverseLayerPtr>
+////////////////////////////////////////////////////////////////////////////////
+/// \brief The Universe struct
+///
+typedef std::list<UniverseLayerPtr> Layers;
+struct Universe : protected Layers
 {
+    void initialize();
+    void resize(int width, int height);
     void update(float dt);
+    void draw() const;
+
+    Layers::iterator begin() {return Layers::begin(); }
+    Layers::iterator end() {return Layers::end(); }
+    Layers::const_iterator begin() const {return Layers::cbegin(); }
+    Layers::const_iterator end() const {return Layers::cend(); }
+    void push_back(UniverseLayerPtr layer);
+
+protected:
+    mutable Widget m_window;
 };
 
 #endif /*  UNIVERSE_H */

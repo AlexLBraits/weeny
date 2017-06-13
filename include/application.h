@@ -17,6 +17,7 @@ protected:
     virtual ~Application();
 
 public:
+    static Application* app();
     int exec();
     virtual void initialize();
 
@@ -25,11 +26,11 @@ public:
     void draw() const;
 
 private:
+    static Application* _app;
     Application_p* _d;
 
 protected:
     Universe m_universe;
-    mutable Widget m_visualiser;
 };
 
 #endif /* APPLICATION_H */

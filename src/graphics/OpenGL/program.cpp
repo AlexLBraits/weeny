@@ -1,16 +1,21 @@
 #include <program.h>
 #include <graphics.h>
 #include <debug.h>
+#include <vector>
+#include <list>
 
 ////////////////////////////////////////////////////////////////////////////////
 ///
 ///
 static const
-char* DEFAULT_VERTEX_SHADER = "attribute vec3 coord;\n"
+char* DEFAULT_VERTEX_SHADER = "attribute vec3 coords;\n"
+                              "attribute vec4 colors;\n"
                               "uniform mat4 transform;\n"
-                              "void main() {\n"
-                              " gl_Position = transform * vec4(coord, 1.0);\n"
-                              "}\n";
+                              "varying vec4 color;\n"
+                              "void main(){\n"
+                                "gl_Position=transform*vec4(coords,1.0);\n"
+                                "color=colors;\n"
+                              "}";
 
 static const
 char* DEFAULT_FRAGMENT_SHADER = "\n"
@@ -18,10 +23,10 @@ char* DEFAULT_FRAGMENT_SHADER = "\n"
 #else
                                 "precision highp float;\n"
 #endif
-                                "uniform vec4 color;\n"
-                                "void main() {\n"
-                                " gl_FragColor = color;\n"
-                                "}\n";
+                                "varying vec4 color;\n"
+                                "void main(){\n"
+                                  "gl_FragColor = color;\n"
+                                "}";
 
 #define SHADER_LOG(shader) {\
     char logbuf[1024];\
@@ -37,7 +42,8 @@ char* DEFAULT_FRAGMENT_SHADER = "\n"
 }
 ///
 ////////////////////////////////////////////////////////////////////////////////
-
+std::map<unsigned int, Program*> Program::programs;
+unsigned int Program::active_program = 0;
 ProgramPtr Program::m_dummy;
 
 Program::Program(const char *vsrc, int vlen,
@@ -54,6 +60,7 @@ Program::Program(const char *vsrc, int vlen,
     SHADER_LOG(fshader);
 
     m_program = glCreateProgram();
+    Program::programs[m_program] = this;
 
     glAttachShader(m_program, vshader);
     glAttachShader(m_program, fshader);
@@ -63,42 +70,58 @@ Program::Program(const char *vsrc, int vlen,
     PROGRAM_LOG(m_program);
 }
 
+Program::~Program()
+{
+    Program::programs.erase(m_program);
+    release();
+}
+
 unsigned int Program::getAttribId(const char *name) const
 {
-    return glGetAttribLocation(m_program, name);
+    unsigned int attrib_id = 0;
+    auto ii = m_attrib_ids.find(name);
+    if(ii == m_attrib_ids.end())
+    {
+        attrib_id = m_attrib_ids[name] = glGetAttribLocation(m_program, name);
+    }
+    else
+    {
+        attrib_id = ii->second;
+    }
+    return attrib_id;
 }
 
 unsigned int Program::getUniformId(const char *name) const
 {
-    return glGetUniformLocation(m_program, name);
+    unsigned int uniform_id = 0;
+    auto ii = m_uniform_ids.find(name);
+    if(ii == m_uniform_ids.end())
+    {
+        uniform_id = m_uniform_ids[name] = glGetUniformLocation(m_program, name);
+    }
+    else
+    {
+        uniform_id = ii->second;
+    }
+    return uniform_id;
 }
 
 bool Program::isActive() const
 {
-    GLint activeProgramId;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &activeProgramId);
-    return m_program && m_program == activeProgramId;
+    return m_program && m_program == Program::active_program;
 }
 
-bool Program::bind() const
+void Program::bind() const
 {
-    bool alreadyActive = isActive();
-    if(alreadyActive == false)
+    if(!isActive())
     {
-        glUseProgram(m_program);
-        alreadyActive = isActive();
+        glUseProgram(Program::active_program = m_program);
     }
-    return alreadyActive;
 }
 
 void Program::release() const
 {
     if(isActive()) glUseProgram(0);
-}
-
-Program::~Program()
-{
-    release();
 }
 
 unsigned int Program::id() const
@@ -120,35 +143,128 @@ ProgramPtr Program::dummy()
     return m_dummy;
 }
 
-void Program::setUniformValue(unsigned int id, const glm::vec4 &value)
+void Program::setUniformValue(const char *name, const glm::vec4 &value)
 {
-    glUniform4fv(id, 1, glm::value_ptr(value));
+    unsigned int uniform_id = getUniformId(name);
+    auto ii = m_uniform_vec4_buffer.find(uniform_id);
+    
+    if(ii == m_uniform_vec4_buffer.end())
+    {
+        glUniform4fv(uniform_id, 1, glm::value_ptr(value));
+        m_uniform_vec4_buffer[uniform_id] = value;
+    }
+    else if(ii->second != value)
+    {
+        draw();
+        
+        glUniform4fv(uniform_id, 1, glm::value_ptr(value));
+        m_uniform_vec4_buffer[uniform_id] = value;
+    }
 }
 
-void Program::setUniformValue(unsigned int id, const glm::mat4x4 &value)
+void Program::setUniformValue(const char *name, const glm::mat4x4 &value)
 {
-    glUniformMatrix4fv(id, 1, GL_FALSE, glm::value_ptr(value));
+    unsigned int uniform_id = getUniformId(name);
+    auto ii = m_uniform_mat4x4_buffer.find(uniform_id);
+    
+    if(ii == m_uniform_mat4x4_buffer.end())
+    {
+        glUniformMatrix4fv(uniform_id, 1, GL_FALSE, glm::value_ptr(value));
+        m_uniform_mat4x4_buffer[uniform_id] = value;
+    }
+    else if(ii->second != value)
+    {
+        draw();
+        glUniformMatrix4fv(uniform_id, 1, GL_FALSE, glm::value_ptr(value));
+        m_uniform_mat4x4_buffer[uniform_id] = value;
+    }
 }
 
-void Program::setUniformValue(const char* name, const glm::vec4 &value)
+void Program::setAttribValues(const char *name, const std::vector<glm::vec2>& values)
 {
-    setUniformValue(getUniformId(name), value);
+    std::vector<glm::vec2>& dst = m_attribs_vec2_buffer[name];
+    dst.insert(dst.end(), values.begin(), values.end());
+    if(dst.size() > 30720) draw();
 }
 
-void Program::setUniformValue(const char* name, const glm::mat4x4 &value)
+void Program::setAttribValues(const char *name, const std::vector<glm::vec3> &values)
 {
-    setUniformValue(getUniformId(name), value);
+    std::vector<glm::vec3>& dst = m_attribs_vec3_buffer[name];
+    dst.insert(dst.end(), values.begin(), values.end());
+    if(dst.size() > 30720) draw();
 }
 
-void Program::drawTriangles(unsigned int id, const glm::vec3* vertices, size_t size)
+void Program::setAttribValues(const char *name, const std::vector<glm::vec4> &values)
 {
-    glEnableVertexAttribArray(id);
-    glVertexAttribPointer(id, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    std::vector<glm::vec4>& dst = m_attribs_vec4_buffer[name];
+    dst.insert(dst.end(), values.begin(), values.end());
+    if(dst.size() > 30720) draw();
+}
+
+unsigned int Program::activeid()
+{
+    GLint activeProgramId;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &activeProgramId);
+    return activeProgramId;
+}
+
+void Program::draw()
+{
+    Program* program = 0;
+    auto ii = Program::programs.find(Program::activeid());
+    if(ii != Program::programs.end()) program = ii->second;
+    
+    if(program == 0) return;
+
+    std::list<unsigned int> ids;
+    size_t size = SIZE_MAX;
+
+    for(auto& vp : program->m_attribs_vec2_buffer)
+    {
+        unsigned int attrib_id = program->getAttribId(vp.first.c_str());
+        glEnableVertexAttribArray(attrib_id);
+        glVertexAttribPointer(attrib_id, 2, GL_FLOAT, GL_FALSE, 0, vp.second.data());
+        ids.push_back(attrib_id);
+        size = std::min(size, vp.second.size());
+    }
+
+    for(auto& vp : program->m_attribs_vec3_buffer)
+    {
+        unsigned int attrib_id = program->getAttribId(vp.first.c_str());
+        glEnableVertexAttribArray(attrib_id);
+        glVertexAttribPointer(attrib_id, 3, GL_FLOAT, GL_FALSE, 0, vp.second.data());
+        ids.push_back(attrib_id);
+        size = std::min(size, vp.second.size());
+    }
+
+    for(auto& vp : program->m_attribs_vec4_buffer)
+    {
+        unsigned int attrib_id = program->getAttribId(vp.first.c_str());
+        glEnableVertexAttribArray(attrib_id);
+        glVertexAttribPointer(attrib_id, 4, GL_FLOAT, GL_FALSE, 0, vp.second.data());
+        ids.push_back(attrib_id);
+        size = std::min(size, vp.second.size());
+    }
+
     glDrawArrays(GL_TRIANGLES, 0, size);
-    glDisableVertexAttribArray(id);
-}
 
-void Program::drawTriangles(const char *name, const glm::vec3* vertices, size_t size)
-{
-    drawTriangles(getAttribId(name), vertices, size);
+    for(const auto& id : ids)
+    {
+        glDisableVertexAttribArray(id);
+    }
+
+    for(auto& vp : program->m_attribs_vec2_buffer)
+    {
+        std::vector<glm::vec2>(vp.second.begin() + size, vp.second.end()).swap(vp.second);
+    }
+    
+    for(auto& vp : program->m_attribs_vec3_buffer)
+    {
+        std::vector<glm::vec3>(vp.second.begin() + size, vp.second.end()).swap(vp.second);
+    }
+    
+    for(auto& vp : program->m_attribs_vec4_buffer)
+    {
+        std::vector<glm::vec4>(vp.second.begin() + size, vp.second.end()).swap(vp.second);
+    }
 }
