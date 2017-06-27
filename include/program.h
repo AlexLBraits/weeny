@@ -24,6 +24,7 @@ struct Program
 
     static ProgramPtr dummy();
 
+    void setUniformValue(const char* name, int value);
     void setUniformValue(const char* name, const glm::vec4& value);
     void setUniformValue(const char* name, const glm::mat4x4& value);
 
@@ -41,6 +42,7 @@ protected:
     mutable std::map<std::string, unsigned int> m_uniform_ids;
     mutable std::map<std::string, unsigned int> m_attrib_ids;
 
+    std::map<unsigned int, int> m_uniform_int_buffer;
     std::map<unsigned int, glm::vec4> m_uniform_vec4_buffer;
     std::map<unsigned int, glm::mat4x4> m_uniform_mat4x4_buffer;
 

@@ -56,3 +56,8 @@ void Application::draw() const
 {
     m_universe.draw();
 }
+
+Universe &Application::universe()
+{
+    return m_universe;
+}

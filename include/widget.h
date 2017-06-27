@@ -3,7 +3,7 @@
 
 struct Universe;
 
-class Widget
+class Window
 {
 public:
     void initialize();

@@ -5,13 +5,19 @@
 
 struct RectangleNode : public DrawingNode
 {
+public:
     RectangleNode(float width, float height, const glm::vec3& pos,
-                  const glm::vec4& color);
+                  const glm::vec4& color);    
+
+    float width() const;
+    void setWidth(float width);
+
+    float height() const;
+    void setHeight(float height);
 
 protected:
     float m_width;
     float m_height;
-    std::vector<glm::vec4> m_colors;
 
     void calculateTransform() const override;
     void draw_this(const glm::mat4x4& M) const override;

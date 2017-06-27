@@ -14,12 +14,30 @@
 ///
 struct UniverseNode : public Hierarchy<UniverseNode>
 {
+    UniverseNode();
+
     virtual void update(float dt);
+
+    glm::vec3 translation() const;
+    void setTranslation(const glm::vec3 &translation);
+    glm::vec3 rotation() const;
+    void setRotation(const glm::vec3 &rotation);
+    glm::vec3 scale() const;
+    void setScale(const glm::vec3 &scale);
+
+    glm::mat4x4 transform() const;
+    void setTransform(const glm::mat4x4 &value) const;
 
 protected:
     virtual void update_this(float dt);
     virtual void calculateTransform() const;
 
+    glm::vec3 m_translation;
+    glm::vec3 m_rotation;
+    glm::vec3 m_scale;
+
+private:
+    mutable int u_dirty_transform;
     mutable glm::mat4x4 u_transform;
 };
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +46,6 @@ protected:
 struct Camera : public UniverseNode
 {
     Camera();
-    glm::mat4x4& getProjectionMatrix() const;
 
     float getFov() const;
     void setFov(float fov);
@@ -63,26 +80,40 @@ protected:
     void calculateTransform() const override;
 };
 ////////////////////////////////////////////////////////////////////////////////
+/// \brief The PerspectiveCamera struct
+///
+struct PerspectiveCamera : public Camera
+{
+    PerspectiveCamera();
+protected:
+    void calculateTransform() const override;
+};
+////////////////////////////////////////////////////////////////////////////////
 /// \brief The DrawingNode struct
 ///
 struct DrawingNode : public UniverseNode
 {
+    DrawingNode();
     virtual void draw(const glm::mat4x4& parenttr) const;
     virtual void resize(int width, int height);
+    TexturePtr texture() const;
     ProgramPtr program() const;
 
-    glm::vec3 position() const;
-    void setPosition(const glm::vec3 &position);
+    glm::vec3 dimensions() const;
+    void setDimensions(const glm::vec3 &dimensions);
 
 protected:
     virtual void draw_this(const glm::mat4x4& M) const;
     virtual void resize_this(int width, int height);
 
-    mutable std::vector<glm::vec3> m_vertices;
-    glm::vec3 m_position;
+    glm::vec3 m_dimensions;
 
+    mutable std::vector<glm::vec3> m_vertices;
+    mutable std::vector<glm::vec2> m_uvs;
+    mutable std::vector<glm::vec4> m_colors;
+
+    mutable TexturePtr m_texture;
     mutable ProgramPtr m_program;
-    TexturePtr m_texture;
 };
 ////////////////////////////////////////////////////////////////////////////////
 /// \brief The Spectator struct
@@ -90,8 +121,9 @@ protected:
 struct Spectator : public DrawingNode
 {
     Spectator(const CameraPtr& camera);
-    glm::mat4x4& getViewMatrix() const;
+
     CameraPtr camera() const;
+    void setCamera(const CameraPtr &camera);
 
 protected:
     void calculateTransform() const override;
@@ -108,7 +140,7 @@ struct UniverseLayer : public DrawingNode
 {
     UniverseLayer();
     void draw(const glm::mat4x4&) const override;
-    glm::mat4x4& getProjectViewMatrix() const;
+    glm::mat4x4 getProjectViewMatrix() const;
     SpectatorPtr spectator() const;
 
 protected:
@@ -136,8 +168,10 @@ struct Universe : protected Layers
     Layers::const_iterator end() const {return Layers::cend(); }
     void push_back(UniverseLayerPtr layer);
 
+    const Window& window() const;
+
 protected:
-    mutable Widget m_window;
+    mutable Window m_window;
 };
 
 #endif /*  UNIVERSE_H */

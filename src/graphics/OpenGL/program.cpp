@@ -9,11 +9,14 @@
 ///
 static const
 char* DEFAULT_VERTEX_SHADER = "attribute vec3 coords;\n"
+                              "attribute vec2 uvs;\n"
                               "attribute vec4 colors;\n"
                               "uniform mat4 transform;\n"
+                              "varying vec2 uv;\n"
                               "varying vec4 color;\n"
                               "void main(){\n"
                                 "gl_Position=transform*vec4(coords,1.0);\n"
+                                "uv=uvs;\n"
                                 "color=colors;\n"
                               "}";
 
@@ -23,9 +26,13 @@ char* DEFAULT_FRAGMENT_SHADER = "\n"
 #else
                                 "precision highp float;\n"
 #endif
+                                "varying vec2 uv;\n"
                                 "varying vec4 color;\n"
+                                "uniform sampler2D texture;\n"
                                 "void main(){\n"
-                                  "gl_FragColor = color;\n"
+                                  "vec4 vcolor=color;\n"
+                                  "vcolor.rgb*=vcolor.a;\n"
+                                  "gl_FragColor=vcolor*texture2D(texture,uv);\n"
                                 "}";
 
 #define SHADER_LOG(shader) {\
@@ -141,6 +148,25 @@ ProgramPtr Program::dummy()
                   );
     }
     return m_dummy;
+}
+
+void Program::setUniformValue(const char *name, int value)
+{
+    unsigned int uniform_id = getUniformId(name);
+    auto ii = m_uniform_int_buffer.find(uniform_id);
+
+    if(ii == m_uniform_int_buffer.end())
+    {
+        glUniform1i(uniform_id, value);
+        m_uniform_int_buffer[uniform_id] = value;
+    }
+    else if(ii->second != value)
+    {
+        draw();
+
+        glUniform1i(uniform_id, value);
+        m_uniform_int_buffer[uniform_id] = value;
+    }
 }
 
 void Program::setUniformValue(const char *name, const glm::vec4 &value)

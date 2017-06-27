@@ -12,11 +12,14 @@ struct Texture
     Texture(const unsigned char* src, unsigned int size);
     ~Texture();
     unsigned int id() const;
+    void bind(int texture_unit = 0) const;
+    void unbind() const;
 
     static TexturePtr dummy();
 
 private:
     unsigned int m_id;
+    mutable int m_used_unit;
     static TexturePtr m_dummy;
 };
 

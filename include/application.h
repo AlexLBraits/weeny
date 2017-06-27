@@ -25,6 +25,8 @@ public:
     void update(float dt);
     void draw() const;
 
+    Universe& universe();
+
 private:
     static Application* _app;
     Application_p* _d;
