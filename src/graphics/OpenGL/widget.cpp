@@ -21,8 +21,6 @@ void Window::draw(const Universe& universe) const
     glDepthFunc(GL_LESS);
     glDepthMask(true);
 
-//    glDisable(GL_BLEND);
-
     for(auto& ul : universe) ul->draw();
 
     Program::draw();
