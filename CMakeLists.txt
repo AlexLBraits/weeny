@@ -52,11 +52,16 @@ file(GLOB
 	ALL_HEADERS
 
 	include/*.h
+	include/base/*.h
+	include/graphics/OpenGL/*.h
+	include/universe/*.h
 )
 file(GLOB
 	ALL_SOURCES
 
 	src/*.cpp
+	src/base/*.cpp
+	src/universe/*.cpp
 )
 # 
 # платформо-зависимые исходники

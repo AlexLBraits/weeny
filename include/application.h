@@ -1,8 +1,8 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <singleton.h>
-#include <universe.h>
+#include <base/singleton.h>
+#include <universe/universe.h>
 #include <widget.h>
 
 class Application_p;

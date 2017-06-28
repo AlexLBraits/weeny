@@ -30,19 +30,18 @@ TexturePtr Texture::dummy()
         m_dummy->m_id = id;
 
         glBindTexture(GL_TEXTURE_2D, id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        unsigned char pixels[] =
+        {
+            0x00, 0x00, 0x00, 0x7f,   0xff, 0xff, 0xff, 0x7f,
+            0xff, 0xff, 0xff, 0x7f,   0x00, 0x00, 0x00, 0x7f
+        };
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//        glGenerateMipmap(GL_TEXTURE_2D);
-
-        // Black/white checkerboard
-        float pixels[] =
-        {
-            0.0f, 0.0f, 0.0f, 0.5f,   1.0f, 1.0f, 1.0f, 0.5f,
-            1.0f, 1.0f, 1.0f, 0.5f,   0.0f, 0.0f, 0.0f, 0.5f
-        };
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_FLOAT, pixels);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
     return m_dummy;
 }

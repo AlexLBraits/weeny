@@ -1,25 +1,16 @@
 #ifndef BASIC_NODES_H
 #define BASIC_NODES_H
 
-#include <universe.h>
+#include <universe/universe.h>
 
-struct RectangleNode : public DrawingNode
+struct RectangleNode : public DrawNode
 {
 public:
     RectangleNode(float width, float height, const glm::vec3& pos,
-                  const glm::vec4& color);    
-
-    float width() const;
-    void setWidth(float width);
-
-    float height() const;
-    void setHeight(float height);
+                  const glm::vec4& color);
+    void update(float dt) override;
 
 protected:
-    float m_width;
-    float m_height;
-
-    void calculateTransform() const override;
     void draw_this(const glm::mat4x4& M) const override;
 };
 

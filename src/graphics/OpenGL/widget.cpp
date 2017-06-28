@@ -1,5 +1,5 @@
 #include <widget.h>
-#include <universe.h>
+#include <universe/universe.h>
 #include <graphics.h>
 
 void Window::initialize()
@@ -11,19 +11,13 @@ void Window::resize(int width, int height)
 }
 void Window::draw(const Universe& universe) const
 {
-    glm::mat4x4 tr(1);
-
     glClearColor(0, 1, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-//    glDisable(GL_DEPTH_TEST);
-//    glEnable(GL_BLEND);
-//    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     
-    for(auto& ul : universe)
-    {
-        ul->draw(tr);
-    }
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    for(auto& ul : universe) ul->draw();
 
     Program::draw();
 }

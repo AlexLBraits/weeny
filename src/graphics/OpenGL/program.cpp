@@ -1,6 +1,6 @@
 #include <program.h>
 #include <graphics.h>
-#include <debug.h>
+#include <base/debug.h>
 #include <vector>
 #include <list>
 

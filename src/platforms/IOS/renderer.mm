@@ -5,6 +5,7 @@ extern Application* application;
 
 @interface Renderer ()
 {
+    bool _initialized;
     GLuint _defaultFBOName;
     EAGLContext* _context;
     
@@ -20,6 +21,7 @@ extern Application* application;
 // Create an ES 2.0 context
 - (instancetype)initWithContext:(EAGLContext*)context AndDrawable:(id<EAGLDrawable>)drawable
 {
+    _initialized = false;
     _context = context;
     
     // Create default framebuffer object. The backing will be allocated for the
@@ -55,8 +57,6 @@ extern Application* application;
         NSLog(@"failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
         return nil;
     }
-    
-    application->initialize();
     
     return self;
 }
@@ -95,6 +95,12 @@ extern Application* application;
     {
         NSLog(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
         return NO;
+    }
+    
+    if(_initialized == false)
+    {
+        application->initialize();
+        _initialized = true;
     }
     
     return YES;

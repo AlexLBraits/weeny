@@ -5,12 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLES20;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.*;
-import javax.microedition.khronos.egl.EGL10;
+// import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
@@ -109,12 +110,6 @@ public class @ANDROID_ACTIVITY_NAME@ extends Activity {
     super(context);
 
     setEGLContextClientVersion (2);
-    // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH){
-    // setEGLConfigChooser(5, 6, 5, 0, 16, 8);
-    // // setEGLConfigChooser(new ConfigChooser());
-    // }
-    //
-    // getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
     setFocusable (true);
     setFocusableInTouchMode (true);
@@ -122,10 +117,9 @@ public class @ANDROID_ACTIVITY_NAME@ extends Activity {
     setOnKeyListener (this);
     setOnTouchListener (this);
 
-    // if(Build.VERSION.SDK_INT >= 11) {
-    //   this.setPreserveEGLContextOnPause(true);
-    // }
     setRenderer (new MyRenderer());
+    // Render the view only when there is a change in the drawing data
+    setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
   }
 
   // Key events
@@ -158,6 +152,8 @@ public class @ANDROID_ACTIVITY_NAME@ extends Activity {
     }
     else
     {
+      GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+      
       String APKPath = getApplicationInfo().sourceDir;
       String ESDPath = Environment.getExternalStorageDirectory().toString ();
       String internalPath = getFilesDir().toString();
@@ -168,14 +164,16 @@ public class @ANDROID_ACTIVITY_NAME@ extends Activity {
       inited = true;
     }
   }
-
+  
+  public void onDrawFrame (GL10 gl) {
+    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+    display ();
+  }
+  
   public void onSurfaceChanged (GL10 gl, int w, int h) {
+    GLES20.glViewport(0, 0, w, h);
     reshape (w, h);
   }
 
-  public void onDrawFrame (GL10 gl) {
-    display ();
   }
-  }
-
 }
