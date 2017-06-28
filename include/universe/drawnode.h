@@ -11,7 +11,7 @@ class DrawNode : public Node
 {
 public:
     DrawNode();
-    void draw(const glm::mat4x4& parenttr = glm::mat4x4(1)) const;
+    void draw(const glm::mat4x4& PV = glm::mat4x4(1)) const;
     TexturePtr texture() const;
     ProgramPtr program() const;
 

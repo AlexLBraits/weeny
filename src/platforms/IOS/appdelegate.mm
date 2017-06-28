@@ -25,10 +25,6 @@ extern Application* Application;
     
     View* view = [[[View alloc] initWithFrame:[_window frame]] autorelease];
     
-//    View  *view = [[View alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//    [myview setBackgroundColor:[UIColor grayColor]];
-//    [self.view addSubview:myview];
-    
     [rootViewController setView:view];
     
     // Override point for customization after application launch.

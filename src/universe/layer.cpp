@@ -14,11 +14,8 @@ Layer::Layer()
 ///
 void Layer::draw() const
 {
-    glm::mat4x4 tr = transform();
-    for(const auto& dnode : *this)
-    {
-        ((const DrawNode&)dnode).draw(tr);
-    }
+    glm::mat4x4 PV = transform();
+    for(const auto& dnode : *this) ((const DrawNode&)dnode).draw(PV);
 }
 ///
 /// \brief Layer::spectator

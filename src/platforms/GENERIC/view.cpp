@@ -33,6 +33,7 @@ void PlatformView::timerEvent(QTimerEvent *event)
 {
     qint64 t = QDateTime::currentMSecsSinceEpoch();
     float dt = (t - _lastTime) / 1000.0f;
+    if(dt > 5.0f) dt = 1.0f / 60.0f;
     _q->update(dt);
     _lastTime = t;
 

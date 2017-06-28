@@ -13,14 +13,10 @@ DrawNode::DrawNode()
 /// \brief DrawingNode::draw
 /// \param parenttr
 ///
-void DrawNode::draw(const glm::mat4x4 &parenttr) const
+void DrawNode::draw(const glm::mat4x4& PV) const
 {
-    glm::mat4x4 modeltr = parenttr * transform();
-    draw_this(modeltr);
-    for(const auto& dnode : *this)
-    {
-        ((const DrawNode&)dnode).draw(modeltr);
-    }
+    draw_this(PV);
+    for(const auto& dnode : *this) ((const DrawNode&)dnode).draw(PV);
 }
 ///
 /// \brief DrawingNode::_draw

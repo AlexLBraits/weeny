@@ -6,6 +6,7 @@ extern Application* application;
 @interface Renderer ()
 {
     bool _initialized;
+    long long _lastTime;
     GLuint _defaultFBOName;
     EAGLContext* _context;
     
@@ -22,6 +23,7 @@ extern Application* application;
 - (instancetype)initWithContext:(EAGLContext*)context AndDrawable:(id<EAGLDrawable>)drawable
 {
     _initialized = false;
+    _lastTime = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
     _context = context;
     
     // Create default framebuffer object. The backing will be allocated for the
@@ -65,6 +67,12 @@ extern Application* application;
 {
     // Replace the implementation of this method to do your own custom drawing
     glBindFramebuffer(GL_FRAMEBUFFER, _defaultFBOName);
+    
+    long long t = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
+    float dt = (t - _lastTime) / 1000.0f;
+    if(dt > 5.0f) dt = 1.0f / 60.0f;
+    application->update(dt);
+    _lastTime = t;
     
     application->draw();
     
