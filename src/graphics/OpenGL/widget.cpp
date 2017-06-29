@@ -25,7 +25,7 @@ void Window::draw(const Universe& universe) const
 
     for(auto& ul : universe) ul->draw();
 
-    Program::draw();
+    Program::drawBuffers();
 }
 
 int Window::width() const

@@ -31,8 +31,12 @@ struct Program
 
     void setAttribValues(const char* name, size_t size, size_t count, const float* data);
 
-    static void draw();
+    static void drawBuffers();
     static unsigned int activeid();
+
+private:
+    size_t _enableAttribBuffers();
+    void _disableAttribBuffers(size_t verticesCount);
 
 protected:
     unsigned int m_program;

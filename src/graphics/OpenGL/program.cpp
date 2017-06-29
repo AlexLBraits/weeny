@@ -169,7 +169,7 @@ void Program::setUniformValue(const char *name, int value)
     }
     else if(ii->second != value)
     {
-        draw();
+        drawBuffers();
 
         glUniform1i(uniform_id, value);
         m_uniform_int_buffer[uniform_id] = value;
@@ -192,7 +192,7 @@ void Program::setUniformValue(const char *name, const glm::vec4 &value)
     }
     else if(ii->second != value)
     {
-        draw();
+        drawBuffers();
 
         glUniform4fv(uniform_id, 1, glm::value_ptr(value));
         m_uniform_vec4_buffer[uniform_id] = value;
@@ -215,7 +215,7 @@ void Program::setUniformValue(const char *name, const glm::mat4x4 &value)
     }
     else if(ii->second != value)
     {
-        draw();
+        drawBuffers();
         glUniformMatrix4fv(uniform_id, 1, GL_FALSE, glm::value_ptr(value));
         m_uniform_mat4x4_buffer[uniform_id] = value;
     }
@@ -242,7 +242,7 @@ void Program::setAttribValues(
     }
 
     AttribBuffer& buf = it->second;
-    if (buf.m_items_count + count > buf.m_capacity) draw();
+    if (buf.m_items_count + count > buf.m_capacity) drawBuffers();
     buf.add(count, data);
 }
 ///
@@ -256,10 +256,39 @@ unsigned int Program::activeid()
     return activeProgramId;
 }
 ///
+/// \brief Program::_enableAttribBuffers
+/// \return
+///
+size_t Program::_enableAttribBuffers()
+{
+    size_t verticesCount = SIZE_MAX;
+    for(auto& vp : m_attribs_buffer)
+    {
+        unsigned int attrib_id = getAttribId(vp.first.c_str());
+        glEnableVertexAttribArray(attrib_id);
+        glVertexAttribPointer(attrib_id, vp.second.m_item_size, GL_FLOAT, GL_FALSE, 0, vp.second.data());
+        verticesCount = std::min(verticesCount, vp.second.m_items_count);
+    }
+    return verticesCount;
+}
+///
+/// \brief Program::_disableAttribBuffers
+/// \param verticesCount
+///
+void Program::_disableAttribBuffers(size_t verticesCount)
+{
+    for(auto& vp : m_attribs_buffer)
+    {
+        unsigned int attrib_id = getAttribId(vp.first.c_str());
+        glDisableVertexAttribArray(attrib_id);
+        vp.second.m_items_count -= verticesCount;
+    }
+}
+///
 /// \brief Program::drawBuffers - отрисовывает информацию, накопленную
 /// в буферах аттрибутов
 ///
-void Program::draw()
+void Program::drawBuffers()
 {
     Program* program = 0;
     auto ii = Program::programs.find(Program::activeid());
@@ -267,47 +296,7 @@ void Program::draw()
 
     if(program == 0) return;
 
-    ////////////////////////////////////////////////////////////////////////////
-    ///
-    /// включаем именованные буферы аттрибутов
-    ///
-    /// накапливаем список идентификаторов в векторе attribIds
-    /// для последующего выключения
-    ///
-    /// в разных буферах может содержаться разное количество вершин,
-    /// поэтому подсчитываем количество вершин для рисования
-    /// в переменной verticesCount
-    /// это будет минимальное количество вершин из всех буферов
-    ///
-    std::vector<unsigned int> attribIds;
-    attribIds.reserve(program->m_attribs_buffer.size());
-    size_t verticesCount = SIZE_MAX;
-
-    for(auto& vp : program->m_attribs_buffer)
-    {
-        unsigned int attrib_id = program->getAttribId(vp.first.c_str());
-        glEnableVertexAttribArray(attrib_id);
-        glVertexAttribPointer(attrib_id, vp.second.m_item_size, GL_FLOAT, GL_FALSE, 0, vp.second.data());
-        attribIds.push_back(attrib_id);
-        verticesCount = std::min(verticesCount, vp.second.m_items_count);
-    }
-    ///
-    /// отрисовываем verticesCount вершин из включенных буферов аттрибутов
-    ///
+    size_t verticesCount = program->_enableAttribBuffers();
     glDrawArrays(GL_TRIANGLES, 0, verticesCount);
-    ///
-    /// включаем буферы аттрибутов по идентификаторам из вектора attribIds
-    ///
-    for(const auto& id : attribIds)
-    {
-        glDisableVertexAttribArray(id);
-    }
-    ///
-    /// уменьшаем количество вершин в буфферах
-    /// на verticesCount - величину отрисованных вершин
-    ///
-    for(auto& vp : program->m_attribs_buffer)
-    {
-        vp.second.m_items_count -= verticesCount;
-    }
+    program->_disableAttribBuffers(verticesCount);
 }
