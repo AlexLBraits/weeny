@@ -20,7 +20,6 @@ protected:
     void timerEvent(QTimerEvent *event) override;
 
 private:
-    qint64 _lastTime;
     Application* _q;
 };
 

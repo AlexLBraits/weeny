@@ -1,6 +1,7 @@
 #include <jni.h>
 #include <stdlib.h>
 #include <queue>
+#include <chrono>
 #include <application.h>
 
 #include <android/log.h>
@@ -52,6 +53,7 @@ void Java_@ANDROID_JNI_NATIVE_METHOD_NAME@_reshape (
 extern "C"
 void Java_@ANDROID_JNI_NATIVE_METHOD_NAME@_display (JNIEnv* env, jobject cls) 
 {
+  application->update();
   application->draw();
 }
 

@@ -22,7 +22,7 @@ public:
     virtual void initialize();
 
     void resize(int width, int height);
-    void update(float dt);
+    void update();
     void draw() const;
 
     Universe& universe();
@@ -30,6 +30,7 @@ public:
 private:
     static Application* _app;
     Application_p* _d;
+    long long _lastUpdateTime;
 
 protected:
     Universe m_universe;

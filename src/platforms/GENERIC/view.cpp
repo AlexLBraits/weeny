@@ -5,7 +5,6 @@
 PlatformView::PlatformView(Application* app)
     : QGLWidget(), _q(app)
 {
-    _lastTime = QDateTime::currentMSecsSinceEpoch();
     startTimer(16);
     setWindowTitle(PROJECT_NAME);
 }
@@ -31,11 +30,6 @@ bool PlatformView::event(QEvent* event)
 
 void PlatformView::timerEvent(QTimerEvent *event)
 {
-    qint64 t = QDateTime::currentMSecsSinceEpoch();
-    float dt = (t - _lastTime) / 1000.0f;
-    if(dt > 5.0f) dt = 1.0f / 60.0f;
-    _q->update(dt);
-    _lastTime = t;
-
+    _q->update();
     updateGL();
 }

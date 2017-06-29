@@ -11,7 +11,7 @@ public:
     void update(float dt) override;
 
 protected:
-    void draw_this(const glm::mat4x4& M) const override;
+    void draw_this(const glm::mat4x4& PV) const override;
 };
 
 #endif /* BASIC_NODES_H */

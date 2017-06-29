@@ -20,23 +20,24 @@ RectangleNode::RectangleNode(float width, float height, const glm::vec3 &pos,
 ///
 void RectangleNode::update(float dt)
 {
+    m_mesh->calculateGeometry(transform());
 }
 ///
 /// \brief RectangleNode::draw_this
 /// \param M
 ///
-void RectangleNode::draw_this(const glm::mat4x4& M) const
+void RectangleNode::draw_this(const glm::mat4x4& PV) const
 {
     ProgramPtr program = this->program();
     program->bind();
-    program->setUniformValue("transform", M * transform());
-    
+    program->setUniformValue("transform", PV);
+
     TexturePtr texture = this->texture();
     int texture_unit = 0;
     program->setUniformValue("texture", texture_unit);
     texture->bind(texture_unit);
-    
-    program->setAttribValues("colors", m_mesh->m_colors);
-    program->setAttribValues("coords", m_mesh->m_vertices);
-    program->setAttribValues("uvs", m_mesh->m_uvs);
+
+    program->setAttribValues("colors", 4, m_mesh->m_colors.size(), (float*)m_mesh->m_colors.data());
+    program->setAttribValues("coords", 3, m_mesh->m_vertices.size(), (float*)m_mesh->m_vertices.data());
+    program->setAttribValues("uvs", 2, m_mesh->m_uvs.size(), (float*)m_mesh->m_uvs.data());
 }
