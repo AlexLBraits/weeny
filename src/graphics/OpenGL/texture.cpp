@@ -1,6 +1,23 @@
 #include <texture.h>
 #include <graphics.h>
-#include <soil/SOIL.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+
+GLuint create_texture(const unsigned char* pixels, int width, int height)
+{
+    GLuint id;
+    glGenTextures(1, &id);
+
+    glBindTexture(GL_TEXTURE_2D, id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    return id;
+}
 
 TexturePtr Texture::m_dummy;
 
@@ -12,14 +29,19 @@ Texture::Texture()
 Texture::Texture(const unsigned char *src, unsigned int size)
     : Texture()
 {
-    m_id = SOIL_load_OGL_texture_from_memory
-        (
-            src,
-            size,
-            SOIL_LOAD_AUTO,
-            SOIL_CREATE_NEW_ID,
-            SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_TEXTURE_REPEATS
-        );
+    int width, height, channels_in_file;
+    unsigned char* pixels = stbi_load_from_memory(
+                src,
+                size,
+                &width,
+                &height,
+                &channels_in_file,
+                4
+                );
+
+    m_id = create_texture(pixels, width, height);
+
+    stbi_image_free(pixels);
 }
 
 Texture::~Texture()
@@ -32,25 +54,14 @@ TexturePtr Texture::dummy()
 {
     if(!m_dummy)
     {
-        m_dummy = TexturePtr(new Texture());
-
-        GLuint id;
-        glGenTextures(1, &id);
-        m_dummy->m_id = id;
-
-        glBindTexture(GL_TEXTURE_2D, id);
-
-        unsigned char pixels[] =
+        static unsigned char pixels[] =
         {
             0x00, 0x00, 0x00, 0x7f,   0xff, 0xff, 0xff, 0x7f,
             0xff, 0xff, 0xff, 0x7f,   0x00, 0x00, 0x00, 0x7f
         };
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        m_dummy = TexturePtr(new Texture());
+        m_dummy->m_id = create_texture(pixels, 2, 2);
     }
     return m_dummy;
 }
