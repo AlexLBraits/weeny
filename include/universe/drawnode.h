@@ -13,6 +13,7 @@ public:
     DrawNode();
     void draw(const glm::mat4x4& PV = glm::mat4x4(1)) const;
     TexturePtr texture() const;
+    void setTexture(const TexturePtr& ptr);
     ProgramPtr program() const;
 
 protected:

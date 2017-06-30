@@ -37,6 +37,11 @@ TexturePtr DrawNode::texture() const
     }
     return m_texture;
 }
+
+void DrawNode::setTexture(const TexturePtr &ptr)
+{
+     m_texture = ptr;
+}
 ///
 /// \brief DrawingNode::program
 /// \return

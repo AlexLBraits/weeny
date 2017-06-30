@@ -270,7 +270,7 @@ void Program::setAttribValues(
     AttributeType type,
     size_t size,
     size_t count,
-    const float *data
+    const void* data
 )
 {
     auto it = m_attribs_buffer.find(name);

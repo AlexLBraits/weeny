@@ -62,7 +62,7 @@ struct Program
     void setUniformValue(const char* name, const glm::mat4x4& value);
 
     void setAttribValues(const char* name, AttributeType type, size_t size,
-                         size_t count, const float* data);
+                         size_t count, const void *data);
 
     static void drawBuffers();
     static unsigned int activeid();

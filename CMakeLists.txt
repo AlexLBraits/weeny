@@ -32,8 +32,17 @@ set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} PARENT_SCOPE)
 
 ###############################################################################
 #
-#	3. Подключение проекта заголовочных файлов
+#	3. Подключение проекта 
+#    заголовочных файлов
 #
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/soil" ${CMAKE_BINARY_DIR}/soil)
+
+set (USED_FRAMEWORKS
+	${USED_FRAMEWORKS}
+
+	soil
+)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -131,11 +140,16 @@ elseif (${BUILD_PLATFORM} STREQUAL "GENERIC")
 	# Find the Qt5OpenGL library
 	find_package(Qt5OpenGL)
 	# Use the Widgets module from Qt 5.
-	set (USED_FRAMEWORKS Qt5::Widgets Qt5::OpenGL)
+	set (USED_FRAMEWORKS
+		${USED_FRAMEWORKS}
+
+		Qt5::Widgets
+		Qt5::OpenGL
+		)
 
 	if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	    set (USED_FRAMEWORKS
-					${USED_FRAMEWORKS}
+			${USED_FRAMEWORKS}
 
 	        "-framework OpenGL"
 	    )

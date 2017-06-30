@@ -1,5 +1,6 @@
 #include <texture.h>
 #include <graphics.h>
+#include <soil/SOIL.h>
 
 TexturePtr Texture::m_dummy;
 
@@ -11,11 +12,19 @@ Texture::Texture()
 Texture::Texture(const unsigned char *src, unsigned int size)
     : Texture()
 {
+    m_id = SOIL_load_OGL_texture_from_memory
+        (
+            src,
+            size,
+            SOIL_LOAD_AUTO,
+            SOIL_CREATE_NEW_ID,
+            SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_TEXTURE_REPEATS
+        );
 }
 
 Texture::~Texture()
 {
-    GLuint id = m_dummy->m_id;
+    GLuint id = m_id;
     if(glIsTexture(id)) glDeleteTextures(1, &id);
 }
 
