@@ -11,7 +11,7 @@ void Window::resize(int width, int height)
 }
 void Window::draw(const Universe& universe) const
 {
-    glClearColor(0, 1, 0, 1);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
 //    glEnable(GL_BLEND);

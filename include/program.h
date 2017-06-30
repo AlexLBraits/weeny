@@ -7,6 +7,38 @@
 #include <vector>
 #include <types.h>
 
+enum struct AttributeType {
+    UNKNOWN,
+    BYTE,
+    UNSIGNED_BYTE,
+    SHORT,
+    UNSIGNED_SHORT,
+    INT,
+    UNSIGNED_INT,
+    FLOAT,
+    DOUBLE
+};
+
+struct AttribBuffer
+{
+    AttribBuffer(AttributeType type, size_t item_size, size_t capacity)
+        : m_type_id(type),
+          m_item_size(item_size),
+          m_capacity(capacity),
+          m_items_count(0)
+    {
+    }
+    virtual ~AttribBuffer() {}
+    virtual void add(size_t count, const void* data) = 0;
+    virtual void* data() const = 0;
+
+    AttributeType m_type_id;
+    size_t m_item_size;
+    size_t m_capacity;
+    size_t m_items_count;
+};
+typedef std::shared_ptr<AttribBuffer> AttribBufferPtr;
+
 struct Program;
 typedef std::shared_ptr<Program> ProgramPtr;
 
@@ -29,7 +61,8 @@ struct Program
     void setUniformValue(const char* name, const glm::vec4& value);
     void setUniformValue(const char* name, const glm::mat4x4& value);
 
-    void setAttribValues(const char* name, size_t size, size_t count, const float* data);
+    void setAttribValues(const char* name, AttributeType type, size_t size,
+                         size_t count, const float* data);
 
     static void drawBuffers();
     static unsigned int activeid();
@@ -49,41 +82,7 @@ protected:
     std::map<unsigned int, glm::vec4> m_uniform_vec4_buffer;
     std::map<unsigned int, glm::mat4x4> m_uniform_mat4x4_buffer;
 
-    struct AttribBuffer
-    {
-        AttribBuffer(size_t item_size, size_t capacity = 30720)
-            : m_item_size(item_size),
-              m_capacity(capacity),
-              m_items_count(0)
-        {
-            m_buffer = (float*)malloc(m_capacity * m_item_size * sizeof(float));
-        }
-        ~AttribBuffer()
-        {
-            free(m_buffer);
-        }
-        void add(size_t count, const void* data)
-        {
-            memcpy(
-                   m_buffer + m_items_count * m_item_size,
-                   data,
-                   count * m_item_size * sizeof(float)
-                   );
-            m_items_count += count;
-        }
-        void* data() const
-        {
-            return m_buffer;
-        }
-
-        size_t m_item_size;
-        size_t m_capacity;
-        size_t m_items_count;
-
-    private:
-        float* m_buffer;
-    };
-    std::map<std::string, AttribBuffer> m_attribs_buffer;
+    std::map<std::string, AttribBufferPtr> m_attribs_buffer;
 
     static std::map<unsigned int, Program*> programs;
     static unsigned int active_program;

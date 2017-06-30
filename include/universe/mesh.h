@@ -11,6 +11,7 @@ struct Mesh
     mutable std::vector<glm::vec2> m_uvs;
     mutable std::vector<glm::vec4> m_colors;
 
+    virtual ~Mesh() {}
     virtual void calculateGeometry(const glm::mat4x4& tr) = 0;
 };
 

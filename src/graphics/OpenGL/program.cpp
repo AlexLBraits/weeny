@@ -49,6 +49,44 @@ char* DEFAULT_FRAGMENT_SHADER = "\n"
 }
 ///
 ////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+///
+///
+template<typename T>
+struct TypedAttribBuffer : public AttribBuffer
+{
+    TypedAttribBuffer(AttributeType type, size_t item_size, size_t capacity = 30720)
+        : AttribBuffer(type, item_size, capacity)
+    {
+        m_buffer = (T*)malloc(m_capacity * m_item_size * sizeof(T));
+    }
+    ~TypedAttribBuffer()
+    {
+        free(m_buffer);
+    }
+    void add(size_t count, const void* data) override
+    {
+        memcpy(
+            m_buffer + m_items_count * m_item_size,
+            data,
+            count * m_item_size * sizeof(T)
+        );
+        m_items_count += count;
+    }
+    void* data() const override
+    {
+        return m_buffer;
+    }
+
+private:
+    T* m_buffer;
+};
+///
+///
+////////////////////////////////////////////////////////////////////////////////
+
+
 std::map<unsigned int, Program*> Program::programs;
 unsigned int Program::active_program = 0;
 ProgramPtr Program::m_dummy;
@@ -229,6 +267,7 @@ void Program::setUniformValue(const char *name, const glm::mat4x4 &value)
 ///
 void Program::setAttribValues(
     const char *name,
+    AttributeType type,
     size_t size,
     size_t count,
     const float *data
@@ -237,13 +276,24 @@ void Program::setAttribValues(
     auto it = m_attribs_buffer.find(name);
     if (it ==  m_attribs_buffer.end())
     {
-        auto ep = m_attribs_buffer.emplace(name, size);
+        AttribBuffer* abp = 0;
+        switch(type)
+        {
+        case AttributeType::UNSIGNED_BYTE:
+            abp = new TypedAttribBuffer<unsigned char>(AttributeType::UNSIGNED_BYTE, size);
+            break;
+        case AttributeType::FLOAT:
+            abp = new TypedAttribBuffer<float>(AttributeType::FLOAT, size);
+        default:
+            break;
+        }
+        auto ep = m_attribs_buffer.emplace(name, AttribBufferPtr(abp));
         it = ep.first;
     }
 
-    AttribBuffer& buf = it->second;
-    if (buf.m_items_count + count > buf.m_capacity) drawBuffers();
-    buf.add(count, data);
+    AttribBufferPtr& buf = it->second;
+    if (buf->m_items_count + count > buf->m_capacity) drawBuffers();
+    buf->add(count, data);
 }
 ///
 /// \brief Program::activeid
@@ -266,8 +316,19 @@ size_t Program::_enableAttribBuffers()
     {
         unsigned int attrib_id = getAttribId(vp.first.c_str());
         glEnableVertexAttribArray(attrib_id);
-        glVertexAttribPointer(attrib_id, vp.second.m_item_size, GL_FLOAT, GL_FALSE, 0, vp.second.data());
-        verticesCount = std::min(verticesCount, vp.second.m_items_count);
+        switch(vp.second->m_type_id)
+        {
+        case AttributeType::UNSIGNED_BYTE:
+            glVertexAttribPointer(attrib_id, vp.second->m_item_size, GL_UNSIGNED_BYTE, GL_TRUE, 0, vp.second->data());
+            break;
+
+        case AttributeType::FLOAT:
+            glVertexAttribPointer(attrib_id, vp.second->m_item_size, GL_FLOAT, GL_FALSE, 0, vp.second->data());
+        default:
+            break;
+        }
+
+        verticesCount = std::min(verticesCount, vp.second->m_items_count);
     }
     return verticesCount;
 }
@@ -281,7 +342,7 @@ void Program::_disableAttribBuffers(size_t verticesCount)
     {
         unsigned int attrib_id = getAttribId(vp.first.c_str());
         glDisableVertexAttribArray(attrib_id);
-        vp.second.m_items_count -= verticesCount;
+        vp.second->m_items_count -= verticesCount;
     }
 }
 ///

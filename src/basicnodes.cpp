@@ -37,7 +37,7 @@ void RectangleNode::draw_this(const glm::mat4x4& PV) const
     program->setUniformValue("texture", texture_unit);
     texture->bind(texture_unit);
 
-    program->setAttribValues("colors", 4, m_mesh->m_colors.size(), (float*)m_mesh->m_colors.data());
-    program->setAttribValues("coords", 3, m_mesh->m_vertices.size(), (float*)m_mesh->m_vertices.data());
-    program->setAttribValues("uvs", 2, m_mesh->m_uvs.size(), (float*)m_mesh->m_uvs.data());
+    program->setAttribValues("colors", AttributeType::FLOAT, 4, m_mesh->m_colors.size(), (float*)m_mesh->m_colors.data());
+    program->setAttribValues("coords", AttributeType::FLOAT, 3, m_mesh->m_vertices.size(), (float*)m_mesh->m_vertices.data());
+    program->setAttribValues("uvs", AttributeType::FLOAT, 2, m_mesh->m_uvs.size(), (float*)m_mesh->m_uvs.data());
 }
