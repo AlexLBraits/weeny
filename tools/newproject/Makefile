@@ -1,31 +1,19 @@
 ###########################################################################
 #
-# make NEWPROJECT name=ProjectName root=ProjectRoot mode=[git|link]
+# make NEWPROJECT name=ProjectName root=ProjectRoot
 #
 # Цель NEWPROJECT создаёт новый проект ProjectName
-# в папке ProjectRoot, по умолчанию ../
+# в папке ProjectRoot, по умолчанию ../../../
 # Xgen подключается или ссылкой или субмодулем git, по умолчанию ссылкой
 #
 NEWPROJECT:
 ifeq ($(name),)
 	@echo 'usage:'
-	@echo 'make NEWPROJECT name=<ProjectName> [root=<ProjectRoot>] [mode=git] [commit=true] [icons=false] [template=<ProjectTemplateName>]'
+	@echo 'make NEWPROJECT name=<ProjectName> [root=<ProjectRoot>]'
 	@echo
 	@echo 'name: name of your new project'
 	@echo
 	@echo 'root: path to new project root folder. default is ../../../'
-	@echo
-	@echo 'mode: '
-	@echo '    if git then init new git repository and add submodule xgen from remote server'
-	@echo '       else add submodule xgen like symbolic link to current xgen folder and no git init'
-	@echo '    default mode not use git'
-	@echo
-	@echo 'commit: if true make first initial commit.'
-	@echo '        if mode not git then also git init. default is false'
-	@echo
-	@echo 'icons:  if true then make new icons for all platforms with java Identicon. default is true'
-	@echo
-	@echo 'template: project to copy. see available projects in ./tools/newproject/templates. default is simple'
 	@echo
 	@echo 'ERROR: name parameter required'
 	@echo
@@ -56,10 +44,12 @@ ifeq ($(OS),Windows_NT)
 else
 	cp -r $(templatePath)/ $(ppath)/
 endif
+ifeq ($(weeny_home),)
+	$(eval weeny_home=$(shell basename $(shell cd ../../ && pwd)))
+endif
 	(sed -i.bak -e "s/@ProjectName@/$(name)/g" $(ppath)/Makefile) && (rm -rf $(ppath)/Makefile.bak)
-ifeq ($(icons),false)
-	@echo 'icons not created'
-else
+	(sed -i.bak -e "s/@weeny_home@/$(weeny_home)/g" $(ppath)/Makefile) && (rm -rf $(ppath)/Makefile.bak)
+	(sed -i.bak -e "s/@weeny_home@/$(weeny_home)/g" $(ppath)/CMakeLists.txt) && (rm -rf $(ppath)/CMakeLists.txt.bak)
 ##########################################################################
 #
 # Создание иконок для всех платформ
@@ -109,23 +99,3 @@ endif
 	convert -filter box -resize 192x192 $(xpmFileName) png32:$(ppath)/targets/ANDROID/addres/icons/Icon192.png
 #
 	rm $(xpmFileName)
-endif
-# ifeq ($(mode),git)
-# 	git init $(ppath) && \
-# 	cd $(ppath) && \
-# 	git submodule add -b unstable git@git.17btest.com:engine.git xgen
-# else
-# 	rm -fr $(ppath)/xgen
-# ifeq ($(OS),Windows_NT)
-# 	$(eval SRCP=$(shell sed -e 's/\\//\\\\\\\\\\\\\\\\/g' <<< $(abspath ./)))
-# 	$(eval DSTP=$(shell sed -e 's/\\//\\\\\\\\\\\\\\\\/g' <<< $(abspath $(ppath)/xgen)))
-# 	(cmd //C mklink //J $(DSTP) $(SRCP))
-# else
-# 	ln -sf $(abspath ./) $(ppath)/xgen
-# endif
-# endif
-# ifeq ($(commit),true)
-# 	git init $(ppath)
-# 	cd $(ppath) && git add --all && git commit --message "initial commit after make NEWPROJECT"
-# endif
-	

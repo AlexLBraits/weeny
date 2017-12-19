@@ -11,7 +11,7 @@ if (NOT DEFINED BUILD_PLATFORM)
 	set(BUILD_PLATFORM "GENERIC")
 endif()
 
-set(WEENY "${CMAKE_CURRENT_SOURCE_DIR}/../@weeny")
+set(WEENY "${CMAKE_CURRENT_SOURCE_DIR}/../@weeny_home@")
 
 ###############################################################################
 #

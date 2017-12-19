@@ -49,7 +49,7 @@ ANDROID:
 	-DANDROID_JAVA_SOURCE_PATH=$(ANDROID_JAVA_SOURCE_PATH) \
 	-DANDROID_JNI_NATIVE_METHOD_NAME=$(ANDROID_JNI_NATIVE_METHOD_NAME) \
 	-DANDROID_PACKAGE_NAME=$(ANDROID_PACKAGE_NAME) \
-	-DCMAKE_TOOLCHAIN_FILE=../../../../../@weeny/src/platforms/ANDROID/android.toolchain.cmake \
+	-DCMAKE_TOOLCHAIN_FILE=../../../../../@weeny_home@/src/platforms/ANDROID/android.toolchain.cmake \
 	-DLIBRARY_OUTPUT_PATH_ROOT=../../. \
 	../../../../	&& \
 	make install -j 8 && \
