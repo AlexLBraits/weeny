@@ -25,7 +25,8 @@ struct AttribBuffer
         : m_type_id(type),
           m_item_size(item_size),
           m_capacity(capacity),
-          m_items_count(0)
+          m_items_count(0),
+          m_stride(0)
     {
     }
     virtual ~AttribBuffer() {}
@@ -36,6 +37,7 @@ struct AttribBuffer
     size_t m_item_size;
     size_t m_capacity;
     size_t m_items_count;
+    size_t m_stride;
 };
 typedef std::shared_ptr<AttribBuffer> AttribBufferPtr;
 

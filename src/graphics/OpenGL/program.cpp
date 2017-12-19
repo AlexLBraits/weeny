@@ -319,11 +319,25 @@ size_t Program::_enableAttribBuffers()
         switch(vp.second->m_type_id)
         {
         case AttributeType::UNSIGNED_BYTE:
-            glVertexAttribPointer(attrib_id, vp.second->m_item_size, GL_UNSIGNED_BYTE, GL_TRUE, 0, vp.second->data());
+            glVertexAttribPointer(
+                attrib_id,
+                vp.second->m_item_size,
+                GL_UNSIGNED_BYTE,
+                GL_TRUE,
+                vp.second->m_stride,
+                vp.second->data()
+            );
             break;
 
         case AttributeType::FLOAT:
-            glVertexAttribPointer(attrib_id, vp.second->m_item_size, GL_FLOAT, GL_FALSE, 0, vp.second->data());
+            glVertexAttribPointer(
+                attrib_id,
+                vp.second->m_item_size,
+                GL_FLOAT,
+                GL_FALSE,
+                vp.second->m_stride,
+                vp.second->data()
+            );
         default:
             break;
         }
