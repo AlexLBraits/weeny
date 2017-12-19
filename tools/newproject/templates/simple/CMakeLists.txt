@@ -36,6 +36,8 @@ add_subdirectory(${WEENY} ${CMAKE_BINARY_DIR}/weeny)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${WEENY}/include)
+include_directories(${WEENY}/src/platforms/${BUILD_PLATFORM})
+include_directories(${WEENY}/3rdparty)
 
 ###############################################################################
 #
