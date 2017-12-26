@@ -1,0 +1,13 @@
+Таргет ANDROID теперь собирается и под Windows
+
+Сборка проверялась в следующем составе:
+1. Android ndk 16.1.4479499
+2. Android sdk (platform android-23)
+3. jdk-8u152
+4. gradle 2.14.1
+5. gcc MinGW-W64 5.3.0
+6. GNU Make 4.1
+7. cmake 3.10.1
+8. ImageMagic 7.0.1-9
+9. node 4.4.5
+10. git version 2.10.2.windows.1
