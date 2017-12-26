@@ -54,6 +54,12 @@ endif
 #
 # Создание иконок для всех платформ
 #
+ifeq ($(OS),Windows_NT)
+	$(eval png=)
+else
+	$(eval png=png32:)
+endif
+
 	$(eval icons=./identicons/identicon.js)
 	$(eval xpmFileName=icon.xpm)
 	node $(icons) $(name) $(xpmFileName)
@@ -61,16 +67,16 @@ endif
 # Иконки OSX
 #
 	mkdir -p $(ppath)/targets/GENERIC/addres/icons/icons.iconset
-	convert -filter box -resize 16x16 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_16x16.png
-	convert -filter box -resize 32x32 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_16x16@2x.png
-	convert -filter box -resize 32x32 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_32x32.png
-	convert -filter box -resize 64x64 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_32x32@2x.png
-	convert -filter box -resize 128x128 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_128x128.png
-	convert -filter box -resize 256x256 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_128x128@2x.png
-	convert -filter box -resize 256x256 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_256x256.png
-	convert -filter box -resize 512x512 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_256x256@2x.png
-	convert -filter box -resize 512x512 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_512x512.png
-	convert -filter box -resize 1024x1024 $(xpmFileName) png32:$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_512x512@2x.png
+	convert -filter box -resize 16x16 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_16x16.png
+	convert -filter box -resize 32x32 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_16x16@2x.png
+	convert -filter box -resize 32x32 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_32x32.png
+	convert -filter box -resize 64x64 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_32x32@2x.png
+	convert -filter box -resize 128x128 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_128x128.png
+	convert -filter box -resize 256x256 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_128x128@2x.png
+	convert -filter box -resize 256x256 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_256x256.png
+	convert -filter box -resize 512x512 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_256x256@2x.png
+	convert -filter box -resize 512x512 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_512x512.png
+	convert -filter box -resize 1024x1024 $(xpmFileName) $(png)$(ppath)/targets/GENERIC/addres/icons/icons.iconset/icon_512x512@2x.png
 ifeq (,$(shell which iconutil))
 else
 	iconutil -c icns -o $(ppath)/targets/GENERIC/addres/icons/icons.icns $(ppath)/targets/GENERIC/addres/icons/icons.iconset
@@ -79,23 +85,23 @@ endif
 # Иконки IOS
 #
 	mkdir -p $(ppath)/targets/IOS/addres/icons
-	convert -filter box -resize 57x57 $(xpmFileName) png32:$(ppath)/targets/IOS/addres/icons/Icon57.png
-	convert -filter box -resize 60x60 $(xpmFileName) png32:$(ppath)/targets/IOS/addres/icons/Icon60.png
-	convert -filter box -resize 72x72 $(xpmFileName) png32:$(ppath)/targets/IOS/addres/icons/Icon72.png
-	convert -filter box -resize 76x76 $(xpmFileName) png32:$(ppath)/targets/IOS/addres/icons/Icon76.png
-	convert -filter box -resize 114x114 $(xpmFileName) png32:$(ppath)/targets/IOS/addres/icons/Icon114.png
-	convert -filter box -resize 120x120 $(xpmFileName) png32:$(ppath)/targets/IOS/addres/icons/Icon120.png
-	convert -filter box -resize 144x144 $(xpmFileName) png32:$(ppath)/targets/IOS/addres/icons/Icon144.png
-	convert -filter box -resize 152x152 $(xpmFileName) png32:$(ppath)/targets/IOS/addres/icons/Icon152.png
-	convert -filter box -resize 180x180 $(xpmFileName) png32:$(ppath)/targets/IOS/addres/icons/Icon180.png
+	convert -filter box -resize 57x57 $(xpmFileName) $(png)$(ppath)/targets/IOS/addres/icons/Icon57.png
+	convert -filter box -resize 60x60 $(xpmFileName) $(png)$(ppath)/targets/IOS/addres/icons/Icon60.png
+	convert -filter box -resize 72x72 $(xpmFileName) $(png)$(ppath)/targets/IOS/addres/icons/Icon72.png
+	convert -filter box -resize 76x76 $(xpmFileName) $(png)$(ppath)/targets/IOS/addres/icons/Icon76.png
+	convert -filter box -resize 114x114 $(xpmFileName) $(png)$(ppath)/targets/IOS/addres/icons/Icon114.png
+	convert -filter box -resize 120x120 $(xpmFileName) $(png)$(ppath)/targets/IOS/addres/icons/Icon120.png
+	convert -filter box -resize 144x144 $(xpmFileName) $(png)$(ppath)/targets/IOS/addres/icons/Icon144.png
+	convert -filter box -resize 152x152 $(xpmFileName) $(png)$(ppath)/targets/IOS/addres/icons/Icon152.png
+	convert -filter box -resize 180x180 $(xpmFileName) $(png)$(ppath)/targets/IOS/addres/icons/Icon180.png
 #
 # Иконки ANDROID
 #
 	mkdir -p $(ppath)/targets/ANDROID/addres/icons
-	convert -filter box -resize 48x48 $(xpmFileName) png32:$(ppath)/targets/ANDROID/addres/icons/Icon48.png
-	convert -filter box -resize 72x72 $(xpmFileName) png32:$(ppath)/targets/ANDROID/addres/icons/Icon72.png
-	convert -filter box -resize 96x96 $(xpmFileName) png32:$(ppath)/targets/ANDROID/addres/icons/Icon96.png
-	convert -filter box -resize 144x144 $(xpmFileName) png32:$(ppath)/targets/ANDROID/addres/icons/Icon144.png
-	convert -filter box -resize 192x192 $(xpmFileName) png32:$(ppath)/targets/ANDROID/addres/icons/Icon192.png
+	convert -filter box -resize 48x48 $(xpmFileName) $(png)$(ppath)/targets/ANDROID/addres/icons/Icon48.png
+	convert -filter box -resize 72x72 $(xpmFileName) $(png)$(ppath)/targets/ANDROID/addres/icons/Icon72.png
+	convert -filter box -resize 96x96 $(xpmFileName) $(png)$(ppath)/targets/ANDROID/addres/icons/Icon96.png
+	convert -filter box -resize 144x144 $(xpmFileName) $(png)$(ppath)/targets/ANDROID/addres/icons/Icon144.png
+	convert -filter box -resize 192x192 $(xpmFileName) $(png)$(ppath)/targets/ANDROID/addres/icons/Icon192.png
 #
 	rm $(xpmFileName)

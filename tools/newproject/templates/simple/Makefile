@@ -28,17 +28,29 @@ else ifeq ($(CMAKE_BUILD_TYPE), Release)
 	ANDROID_BUILD_TYPE=release
 endif
 
+ifeq ($(OS),Windows_NT)
+	ANDROID_COMMAND=android.bat
+else
+	ANDROID_COMMAND=android
+endif
+
 ANDROID:
 	mkdir -p build/$@ && cd build/$@ && \
 	((mkdir assets) || (rm -rf assets/*)) && \
 	((mkdir jni) || (rm -rf jni/*)) && \
 	((mkdir -p $(ANDROID_JAVA_SOURCE_PATH)) || (rm -rf $(ANDROID_JAVA_SOURCE_PATH)/*)) && \
-	(android create project --name $(PROJECT_NAME) --path . --target $(ANDROID_PLATFORM) --package $(ANDROID_PACKAGE_NAME) --activity $(ANDROID_ACTIVITY_NAME) || \
-	android update project --name $(PROJECT_NAME) --path . --target $(ANDROID_PLATFORM)) && \
+	($(ANDROID_COMMAND) create project --name $(PROJECT_NAME) --path . --target $(ANDROID_PLATFORM) --package $(ANDROID_PACKAGE_NAME) --activity $(ANDROID_ACTIVITY_NAME) || \
+	$(ANDROID_COMMAND) update project --name $(PROJECT_NAME) --path . --target $(ANDROID_PLATFORM)) && \
 	rm -rf libs/* && \
 	mkdir -p obj/$(ANDROID_ABI) && cd obj/$(ANDROID_ABI) && \
 	cmake \
 	-DBUILD_PLATFORM=$@ \
+	-DCMAKE_SYSTEM_NAME=Android \
+	-DCMAKE_SYSTEM_VERSION=$(ANDROID_BUILD_SDK_VERSION) \
+	-DCMAKE_ANDROID_ARCH_ABI=$(ANDROID_ABI) \
+	-DCMAKE_ANDROID_NDK=$(ANDROID_NDK) \
+	-DCMAKE_ANDROID_STL_TYPE=gnustl_static \
+	-DLIBRARY_OUTPUT_PATH=$(shell pwd)/build/$@/libs/$(ANDROID_ABI) \
 	$(COMMON_DEFINITIONS) \
 	-DANDROID_ACTIVITY_NAME=$(ANDROID_ACTIVITY_NAME) \
 	-DANDROID_BUILD_APPLICATION_ID=$(ANDROID_BUILD_APPLICATION_ID) \
@@ -49,9 +61,7 @@ ANDROID:
 	-DANDROID_JAVA_SOURCE_PATH=$(ANDROID_JAVA_SOURCE_PATH) \
 	-DANDROID_JNI_NATIVE_METHOD_NAME=$(ANDROID_JNI_NATIVE_METHOD_NAME) \
 	-DANDROID_PACKAGE_NAME=$(ANDROID_PACKAGE_NAME) \
-	-DCMAKE_TOOLCHAIN_FILE=../../../../../@weeny_home@/src/platforms/ANDROID/android.toolchain.cmake \
-	-DLIBRARY_OUTPUT_PATH_ROOT=../../. \
-	../../../../	&& \
+	../../../../ -G "Unix Makefiles" && \
 	make install -j 8 && \
 	cd ../../. && \
 	./gradlew $(ANDROID_BUILD_TYPE) && \

@@ -67,7 +67,7 @@ function d2h(d)
         }
     }
 
-	var xpm = "static char* <variable_name>[] = {\" 7 7 2 1\"";
+	var xpm = "static char* variable_name[] = {\" 7 7 2 1\"";
 	xpm += ",\"" + fgp + " c " + foregroundColour + "\"";
 	xpm += ",\"" + bgp + " c " + backgroundColour + "\"";
 	for (var i = 0; i < 7; ++i) {
