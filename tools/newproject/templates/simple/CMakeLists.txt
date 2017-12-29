@@ -5,7 +5,7 @@
 #	Строка необходима, так как язык cmake меняется от версии к версии
 #	В проекте выбираем версию cmake такую же, как и в @weeny
 #
-cmake_minimum_required (VERSION 3.10.1)
+cmake_minimum_required (VERSION 2.8.8)
 
 if (NOT DEFINED BUILD_PLATFORM)
 	set(BUILD_PLATFORM "GENERIC")
